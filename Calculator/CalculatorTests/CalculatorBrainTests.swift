@@ -265,4 +265,67 @@ class CalculatorBrainTests: XCTestCase {
             XCTAssertFalse(testBrain.result == nil)
         }
     }
+    
+    func testEvaluateAssignment2Task4() {
+        var testBrain = CalculatorBrain()
+        let testDictionary = ["x":-1, "y":0.25]
+
+        // cos(x)
+        testBrain.setOperand(variable: "x")
+        testBrain.performOperation("cos")
+        var (result, isPending, description) = testBrain.evaluate(using: testDictionary)
+        if result != nil {
+            XCTAssertTrue(abs(result! - 0.540302) < 0.0001)
+        } else {
+            XCTAssertFalse(result == nil)
+        }
+        XCTAssertFalse(isPending)
+        XCTAssertEqual(description, "cos(x)")
+
+        // y × 2 =
+        testBrain.setOperand(variable: "y")
+        testBrain.performOperation("×")
+        (result, isPending, description) = testBrain.evaluate(using: testDictionary)
+        XCTAssertEqual(result, 0.25)
+        XCTAssertTrue(isPending)
+        XCTAssertEqual(description, "0.25 ×")
+        testBrain.setOperand(2)
+        (result, isPending, description) = testBrain.evaluate(using: testDictionary)
+        XCTAssertEqual(result, 0.25)
+        XCTAssertTrue(isPending)
+        XCTAssertEqual(description, "0.25 ×")
+        testBrain.performOperation("=")
+        (result, isPending, description) = testBrain.evaluate(using: testDictionary)
+        XCTAssertEqual(result, 0.5)
+        XCTAssertFalse(isPending)
+        XCTAssertEqual(description, "0.25 × 2")
+        
+        // z + 465.23 = (z is not in dictionary, so assumed to be 0)
+        testBrain.setOperand(variable: "z")
+        testBrain.performOperation("+")
+        testBrain.setOperand(465.23)
+        testBrain.performOperation("=")
+        (result, isPending, description) = testBrain.evaluate(using: testDictionary)
+        XCTAssertEqual(result, 465.23)
+        XCTAssertFalse(isPending)
+        XCTAssertEqual(description, "0 + 465.23")
+
+        // z + 777 = (not supplying a dictionary, so z assumed to be 0)
+        testBrain.setOperand(variable: "z")
+        testBrain.performOperation("+")
+        testBrain.setOperand(777)
+        testBrain.performOperation("=")
+        (result, isPending, description) = testBrain.evaluate()
+        XCTAssertEqual(result, 465.23)
+        XCTAssertFalse(isPending)
+        XCTAssertEqual(description, "0 + 465.23")
+    
+        // and testing calculation without variable
+        testBrain.setOperand(4)
+        testBrain.performOperation("+")
+        testBrain.setOperand(9)
+        testBrain.performOperation("=")
+        (result, isPending, description) = testBrain.evaluate()
+        XCTAssertEqual(result, 13)
+    }
 }

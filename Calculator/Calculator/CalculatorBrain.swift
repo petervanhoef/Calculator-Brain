@@ -124,4 +124,12 @@ struct CalculatorBrain {
             }
         }
     }
+    
+    func setOperand(variable named: String) {
+        
+    }
+
+    func evaluate(using variables: Dictionary<String,Double>? = nil) -> (result: Double?, isPending: Bool, description: String) {
+        return (nil, false, "")
+    }
 }
