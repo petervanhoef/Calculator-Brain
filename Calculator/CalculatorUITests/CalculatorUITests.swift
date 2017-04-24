@@ -468,7 +468,6 @@ class CalculatorUITests: XCTestCase {
         app.buttons["→M"].tap()
         XCTAssert(app.staticTexts["√(9 + M) ="].exists)
         XCTAssert(app.staticTexts["4"].exists)
-        XCTAssert(app.staticTexts["7"].exists)
         
         // + 14 = ⇒ display now shows 18, description is now √(9+M)+14
         app.buttons["+"].tap()
@@ -477,6 +476,5 @@ class CalculatorUITests: XCTestCase {
         app.buttons["="].tap()
         XCTAssert(app.staticTexts["√(9 + M) + 14 ="].exists)
         XCTAssert(app.staticTexts["18"].exists)
-        XCTAssert(app.staticTexts["7"].exists)
     }
 }

@@ -28,41 +28,43 @@ class ViewController: UIViewController {
         }
     }
     
-    var displayValue: Double {
+    var displays: (result: Double?, isPending: Bool, description: String) {
         get {
-            return Double(display.text!)!
+            return (Double(display.text!)!, false, sequence.text!)
         }
         set {
-            let numberFormatter = NumberFormatter()
-            numberFormatter.numberStyle = .decimal
-            numberFormatter.usesGroupingSeparator = false
-            numberFormatter.maximumFractionDigits = Constants.numberOfDigitsAfterDecimalPoint
-            display.text = numberFormatter.string(from: NSNumber(value: newValue))
+            if newValue.result != nil {
+                let numberFormatter = NumberFormatter()
+                numberFormatter.numberStyle = .decimal
+                numberFormatter.usesGroupingSeparator = false
+                numberFormatter.maximumFractionDigits = Constants.numberOfDigitsAfterDecimalPoint
+                display.text = numberFormatter.string(from: NSNumber(value: newValue.result!))
+            }
+            if newValue.description.isEmpty {
+                sequence.text = " "
+            } else {
+                sequence.text = newValue.description + (newValue.isPending ? ( (newValue.description.characters.last != " ") ? " …" : "…") : " =")
+            }
         }
     }
     
     private var brain = CalculatorBrain()
+    private var dictionary = [String: Double]()
     
     @IBAction func performOperation(_ sender: UIButton) {
         if userIsInTheMiddleOfTyping {
-            brain.setOperand(displayValue)
+            brain.setOperand(displays.result!)
             userIsInTheMiddleOfTyping = false
         }
         if let mathematicalSymbol = sender.currentTitle {
             brain.performOperation(mathematicalSymbol)
         }
-        if let result = brain.result {
-            displayValue = result
-        }
-        if let description = brain.description {
-            sequence.text = description + (brain.resultIsPending ? ( (description.characters.last != " ") ? " …" : "…") : " =")
-        }
+        displays = brain.evaluate(using: dictionary)
     }
     
     @IBAction func clear(_ sender: UIButton) {
         brain = CalculatorBrain()
-        displayValue = 0
-        sequence.text = " "
+        displays = (0, false, "")
     }
     
     @IBAction func backspace(_ sender: UIButton) {
@@ -75,6 +77,19 @@ class ViewController: UIViewController {
             }
             display.text = textCurrentlyInDisplay
         }
+    }
+    
+    @IBAction func evaluateVariable(_ sender: UIButton) {
+        userIsInTheMiddleOfTyping = false
+        let symbol = String(sender.currentTitle!.characters.dropFirst())
+        dictionary[symbol] = displays.result!
+        displays = brain.evaluate(using: dictionary)
+    }
+    
+    @IBAction func setVariable(_ sender: UIButton) {
+        let symbol = sender.currentTitle!
+        brain.setOperand(variable: symbol)
+        displays = brain.evaluate(using: dictionary)
     }
 }
 
