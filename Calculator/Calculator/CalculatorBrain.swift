@@ -10,8 +10,15 @@ import Foundation
 
 struct CalculatorBrain {
     
-    private var accumulator: Double?
-    private var accumulatorString: String? // todo tuple
+    // MARK: - Internal
+    
+    private enum ExpressionLiteral {
+        case operand(Double)
+        case operation(String)
+        case variable(String)
+    }
+    
+    private var sequence = [ExpressionLiteral]()
     
     private enum Operation {
         case constant(Double)
@@ -40,96 +47,127 @@ struct CalculatorBrain {
     ]
     
     mutating func performOperation(_ symbol: String) {
-        if let operation = operations[symbol] {
-            switch operation {
-            case .constant(let value):
-                accumulator = value
-                accumulatorString = symbol
-            case .nullaryOperation(let function, let description):
-                accumulator = function()
-                accumulatorString = description()
-            case .unaryOperation(let function, let descriptionFunction):
-                if accumulator != nil {
-                    accumulator = function(accumulator!)
-                    accumulatorString = descriptionFunction(accumulatorString!)
-                }
-            case .binaryOperation(let function, let descriptionFunction):
-                performPendingBinaryOperation()
-                if accumulator != nil {
-                    pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator!, descriptionFunction: descriptionFunction, descriptionOperand: accumulatorString!)
-                    accumulator = nil
-                    accumulatorString = nil
-                }
-                break
-            case .equals:
-                performPendingBinaryOperation()
-            }
-        }
+        sequence.append(ExpressionLiteral.operation(symbol))
     }
     
-    private mutating func performPendingBinaryOperation() {
-        if pendingBinaryOperation != nil && accumulator != nil {
-            accumulator = pendingBinaryOperation!.perform(with: accumulator!)
-            accumulatorString = pendingBinaryOperation!.buildDescription(with: accumulatorString!)
-            pendingBinaryOperation = nil
-        }
-    }
-    
-    private var pendingBinaryOperation: PendingBinaryOperation?
-    
-    private struct PendingBinaryOperation {
-        let function: (Double,Double) -> Double
-        let firstOperand: Double
- 
-        let descriptionFunction: (String, String) -> String
-        let descriptionOperand: String
-        
-        func perform(with secondOperand: Double) -> Double {
-            return function(firstOperand, secondOperand)
-        }
-        
-        func buildDescription(with secondOperand: String) -> String {
-            return descriptionFunction(descriptionOperand, secondOperand)
-        }
-    }
+    // MARK: - API
     
     mutating func setOperand(_ operand: Double) {
-        accumulator = operand
-
-        let numberFormatter = NumberFormatter()
-        numberFormatter.numberStyle = .decimal
-        numberFormatter.usesGroupingSeparator = false
-        numberFormatter.maximumFractionDigits = Constants.numberOfDigitsAfterDecimalPoint
-        accumulatorString = numberFormatter.string(from: NSNumber(value: operand))
+        sequence.append(ExpressionLiteral.operand(operand))
     }
     
     var result: Double? {
         get {
-            return accumulator
+            return evaluate().result
         }
     }
     
     var resultIsPending: Bool {
         get {
-            return pendingBinaryOperation != nil
+            return evaluate().isPending
         }
     }
     
     var description: String? {
         get {
-            if pendingBinaryOperation != nil {
-                return pendingBinaryOperation!.descriptionFunction(pendingBinaryOperation!.descriptionOperand, accumulatorString ?? "")
-            } else {
-                return accumulatorString
-            }
+            return evaluate().description
         }
     }
     
-    func setOperand(variable named: String) {
-        
+    mutating func setOperand(variable named: String) {
+        sequence.append(ExpressionLiteral.variable(named))
     }
 
     func evaluate(using variables: Dictionary<String,Double>? = nil) -> (result: Double?, isPending: Bool, description: String) {
-        return (nil, false, "")
+        var accumulator: Double?
+        var accumulatorString: String? // todo tuple
+        var pendingBinaryOperation: PendingBinaryOperation?
+
+        // Old functions are moved into this one as nested functionality
+        func setOperand(_ operand: Double) {
+            accumulator = operand
+            
+            let numberFormatter = NumberFormatter()
+            numberFormatter.numberStyle = .decimal
+            numberFormatter.usesGroupingSeparator = false
+            numberFormatter.maximumFractionDigits = Constants.numberOfDigitsAfterDecimalPoint
+            accumulatorString = numberFormatter.string(from: NSNumber(value: operand))
+        }
+        
+        func setOperand(variable named: String) {
+            accumulator = variables?[named] ?? 0
+            accumulatorString = named
+        }
+
+        func performPendingBinaryOperation() {
+            if pendingBinaryOperation != nil && accumulator != nil {
+                accumulator = pendingBinaryOperation!.perform(with: accumulator!)
+                accumulatorString = pendingBinaryOperation!.buildDescription(with: accumulatorString!)
+                pendingBinaryOperation = nil
+            }
+        }
+        
+        struct PendingBinaryOperation {
+            let function: (Double,Double) -> Double
+            let firstOperand: Double
+            
+            let descriptionFunction: (String, String) -> String
+            let descriptionOperand: String
+            
+            func perform(with secondOperand: Double) -> Double {
+                return function(firstOperand, secondOperand)
+            }
+            
+            func buildDescription(with secondOperand: String) -> String {
+                return descriptionFunction(descriptionOperand, secondOperand)
+            }
+        }
+        
+        func performOperation(_ symbol: String) {
+            if let operation = operations[symbol] {
+                switch operation {
+                case .constant(let value):
+                    accumulator = value
+                    accumulatorString = symbol
+                case .nullaryOperation(let function, let description):
+                    accumulator = function()
+                    accumulatorString = description()
+                case .unaryOperation(let function, let descriptionFunction):
+                    if accumulator != nil {
+                        accumulator = function(accumulator!)
+                        accumulatorString = descriptionFunction(accumulatorString!)
+                    }
+                case .binaryOperation(let function, let descriptionFunction):
+                    performPendingBinaryOperation()
+                    if accumulator != nil {
+                        pendingBinaryOperation = PendingBinaryOperation(function: function, firstOperand: accumulator!, descriptionFunction: descriptionFunction, descriptionOperand: accumulatorString!)
+                        accumulator = nil
+                        accumulatorString = nil
+                    }
+                    break
+                case .equals:
+                    performPendingBinaryOperation()
+                }
+            }
+        }
+        
+        // Entered sequence is parsed
+        for item in sequence {
+            switch item {
+            case .operand(let operand):
+                setOperand(operand)
+            case .operation(let operation):
+                performOperation(operation)
+            case .variable(let variable):
+                setOperand(variable: variable)
+            }
+        }
+        
+        if pendingBinaryOperation != nil {
+            return (accumulator, true, pendingBinaryOperation!.descriptionFunction(pendingBinaryOperation!.descriptionOperand, accumulatorString ?? ""))
+        } else {
+            return (accumulator, false, accumulatorString ?? "")
+        }
+        
     }
 }
