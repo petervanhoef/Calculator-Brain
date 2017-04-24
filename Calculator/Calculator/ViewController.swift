@@ -12,6 +12,7 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
     @IBOutlet weak var sequence: UILabel!
+    @IBOutlet weak var memory: UILabel!
     
     var userIsInTheMiddleOfTyping = false
     
@@ -44,6 +45,15 @@ class ViewController: UIViewController {
                 sequence.text = " "
             } else {
                 sequence.text = newValue.description + (newValue.isPending ? ( (newValue.description.characters.last != " ") ? " …" : "…") : " =")
+            }
+            if let memoryValue = dictionary["M"] {
+                let numberFormatter = NumberFormatter()
+                numberFormatter.numberStyle = .decimal
+                numberFormatter.usesGroupingSeparator = false
+                numberFormatter.maximumFractionDigits = Constants.numberOfDigitsAfterDecimalPoint
+                memory.text = numberFormatter.string(from: NSNumber(value: memoryValue))
+            } else {
+                memory.text = " "
             }
         }
     }
