@@ -477,4 +477,49 @@ class CalculatorUITests: XCTestCase {
         XCTAssert(app.staticTexts["√(9 + M) + 14 ="].exists)
         XCTAssert(app.staticTexts["18"].exists)
     }
+    
+    func testValueMAssignment2Task8() {
+        let app = XCUIApplication()
+        
+        // 9 + M = √ ⇒ description is √(9+M), display is 3 because M is not set (thus 0.0)
+        app.buttons["9"].tap()
+        app.buttons["+"].tap()
+        app.buttons["M"].tap()
+        app.buttons["="].tap()
+        app.buttons["√"].tap()
+        XCTAssert(app.staticTexts["√(9 + M) ="].exists)
+        XCTAssert(app.staticTexts["3"].exists)
+        XCTAssert(app.staticTexts[" "].exists)
+        
+        // 7 →M ⇒ display now shows 4 (the square root of 16), description is still √(9+M)
+        app.buttons["7"].tap()
+        app.buttons["→M"].tap()
+        XCTAssert(app.staticTexts["√(9 + M) ="].exists)
+        XCTAssert(app.staticTexts["4"].exists)
+        XCTAssert(app.staticTexts["7"].exists)
+        
+        // + 14 = ⇒ display now shows 18, description is now √(9+M)+14
+        app.buttons["+"].tap()
+        app.buttons["1"].tap()
+        app.buttons["4"].tap()
+        app.buttons["="].tap()
+        XCTAssert(app.staticTexts["√(9 + M) + 14 ="].exists)
+        XCTAssert(app.staticTexts["18"].exists)
+        XCTAssert(app.staticTexts["7"].exists)
+        
+        // 16 →M ⇒ display now shows 19, description is still √(9+M)+14
+        app.buttons["1"].tap()
+        app.buttons["6"].tap()
+        app.buttons["→M"].tap()
+        XCTAssert(app.staticTexts["√(9 + M) + 14 ="].exists)
+        XCTAssert(app.staticTexts["19"].exists)
+        XCTAssert(app.staticTexts["16"].exists)
+
+        // clear
+        app.buttons["C"].tap()
+        
+        // check state
+        XCTAssert(app.staticTexts[" "].exists)
+        XCTAssert(app.staticTexts["0"].exists)
+    }
 }
