@@ -56,18 +56,21 @@ struct CalculatorBrain {
         sequence.append(ExpressionLiteral.operand(operand))
     }
     
+    @available(*, deprecated, message: "Use evaluate instead")
     var result: Double? {
         get {
             return evaluate().result
         }
     }
     
+    @available(*, deprecated, message: "Use evaluate instead")
     var resultIsPending: Bool {
         get {
             return evaluate().isPending
         }
     }
     
+    @available(*, deprecated, message: "Use evaluate instead")
     var description: String? {
         get {
             return evaluate().description
