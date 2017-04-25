@@ -74,6 +74,7 @@ class ViewController: UIViewController {
     
     @IBAction func clear(_ sender: UIButton) {
         brain = CalculatorBrain()
+        dictionary = [:]
         displays = (0, false, "")
     }
     
