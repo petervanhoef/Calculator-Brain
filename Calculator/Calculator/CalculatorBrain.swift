@@ -46,11 +46,15 @@ struct CalculatorBrain {
         "=" : Operation.equals
     ]
     
+    // MARK: - API
+
+    func undo() {
+        
+    }
+    
     mutating func performOperation(_ symbol: String) {
         sequence.append(ExpressionLiteral.operation(symbol))
     }
-    
-    // MARK: - API
     
     mutating func setOperand(_ operand: Double) {
         sequence.append(ExpressionLiteral.operand(operand))

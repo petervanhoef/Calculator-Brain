@@ -561,4 +561,29 @@ class CalculatorUITests: XCTestCase {
         XCTAssert(app.staticTexts["0"].exists)
         XCTAssertFalse(app.staticTexts["53"].exists)
     }
+    
+    func testUndoButtonAssignment2Task10() {
+        let app = XCUIApplication()
+        
+        // For example, enter M cos,
+        app.buttons["M"].tap()
+        app.buttons["cos"].tap()
+        XCTAssert(app.staticTexts["cos(M) ="].exists)
+        XCTAssert(app.staticTexts["1"].exists)
+        XCTAssert(app.staticTexts[" "].exists)
+        
+        // then π, then →M,
+        app.buttons["π"].tap()
+        app.buttons["→M"].tap()
+        XCTAssert(app.staticTexts["π ="].exists)
+        XCTAssert(app.staticTexts["3.141593"].exists)
+        
+        // then undo (to get rid of the π) ...
+        app.buttons["BS"].tap()
+        
+        // now your calculator will show the value of cos(M) which should be -1
+        XCTAssert(app.staticTexts["cos(M) ="].exists)
+        XCTAssert(app.staticTexts["-1"].exists)
+        XCTAssert(app.staticTexts["3.141593"].exists)
+    }
 }

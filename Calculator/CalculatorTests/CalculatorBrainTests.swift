@@ -332,4 +332,27 @@ class CalculatorBrainTests: XCTestCase {
         (result, isPending, description) = testBrain.evaluate()
         XCTAssertEqual(result, 13)
     }
+
+    func testUndoButtonAssignment2Task10() {
+        var testBrain = CalculatorBrain()
+        let testDictionary = ["M":3.141593]
+        
+        // For example, enter M cos,
+        testBrain.setOperand(variable: "M")
+        testBrain.performOperation("cos")
+        XCTAssertEqual(testBrain.evaluate().result, 1)
+        XCTAssertEqual(testBrain.evaluate().description, "cos(M)")
+        
+        // then π, then →M,
+        testBrain.performOperation("π")
+        XCTAssertTrue(abs(testBrain.evaluate().result! - Double.pi) < 0.0001)
+        XCTAssertEqual(testBrain.evaluate().description, "π")
+
+        // then undo (to get rid of the π) ...
+        testBrain.undo()
+        
+        // now your calculator will show the value of cos(M) which should be -1
+        XCTAssertEqual(testBrain.evaluate(using: testDictionary).result, -1)
+        XCTAssertEqual(testBrain.evaluate(using: testDictionary).description, "cos(M)")
+    }
 }
