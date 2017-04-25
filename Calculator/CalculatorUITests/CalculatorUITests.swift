@@ -522,4 +522,43 @@ class CalculatorUITests: XCTestCase {
         XCTAssert(app.staticTexts[" "].exists)
         XCTAssert(app.staticTexts["0"].exists)
     }
+    
+    func testClearButtonAssignment2Task9() {
+        let app = XCUIApplication()
+        
+        // check state
+        XCTAssert(app.staticTexts[" "].exists)
+        XCTAssert(app.staticTexts["0"].exists)
+        
+        app.buttons["7"].tap()
+        app.buttons["+"].tap()
+        XCTAssert(app.staticTexts["7 + …"].exists)
+        XCTAssert(app.staticTexts["7"].exists)
+        XCTAssert(app.staticTexts[" "].exists)
+        
+        app.buttons["M"].tap()
+        XCTAssert(app.staticTexts["7 + M …"].exists)
+        XCTAssert(app.staticTexts["0"].exists)
+        XCTAssert(app.staticTexts[" "].exists)
+        
+        app.buttons["="].tap()
+        XCTAssert(app.staticTexts["7 + M ="].exists)
+        XCTAssert(app.staticTexts["7"].exists)
+        XCTAssert(app.staticTexts[" "].exists)
+        
+        app.buttons["5"].tap()
+        app.buttons["3"].tap()
+        app.buttons["→M"].tap()
+        XCTAssert(app.staticTexts["7 + M ="].exists)
+        XCTAssert(app.staticTexts["60"].exists)
+        XCTAssert(app.staticTexts["53"].exists)
+
+        // clear
+        app.buttons["C"].tap()
+        
+        // check state
+        XCTAssert(app.staticTexts[" "].exists)
+        XCTAssert(app.staticTexts["0"].exists)
+        XCTAssertFalse(app.staticTexts["53"].exists)
+    }
 }
