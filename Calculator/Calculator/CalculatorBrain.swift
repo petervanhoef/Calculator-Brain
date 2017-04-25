@@ -48,8 +48,10 @@ struct CalculatorBrain {
     
     // MARK: - API
 
-    func undo() {
-        
+    mutating func undo() {
+        if !sequence.isEmpty {
+            sequence.removeLast()
+        }
     }
     
     mutating func performOperation(_ symbol: String) {

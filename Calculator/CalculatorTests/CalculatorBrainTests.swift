@@ -352,7 +352,7 @@ class CalculatorBrainTests: XCTestCase {
         testBrain.undo()
         
         // now your calculator will show the value of cos(M) which should be -1
-        XCTAssertEqual(testBrain.evaluate(using: testDictionary).result, -1)
+        XCTAssertTrue(abs(testBrain.evaluate(using: testDictionary).result! + 1) < 0.0001)
         XCTAssertEqual(testBrain.evaluate(using: testDictionary).description, "cos(M)")
     }
 }

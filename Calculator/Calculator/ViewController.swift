@@ -87,6 +87,9 @@ class ViewController: UIViewController {
                 textCurrentlyInDisplay = "0"
             }
             display.text = textCurrentlyInDisplay
+        } else {
+            brain.undo()
+            displays = brain.evaluate(using: dictionary)
         }
     }
     
