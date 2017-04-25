@@ -1,5 +1,5 @@
 # Calculator-Brain
-My solutions of the required tasks and extra credits for CS193P Winter 2017 Assignment II: Calculator Brain
+My solutions of the required tasks and extra credits for **CS193P Winter 2017 Assignment II: Calculator Brain**
 
 Some notes:
 * This assignment builds on top of [my solution for CS193P Winter 2017 Assignment I: Calculator](https://github.com/petervanhoef/Calculator)
