@@ -1,8 +1,8 @@
 # Calculator-Brain
-CS193P Winter 2017 Assignment II: Calculator Brain
+My solutions of the required tasks and extra credits for CS193P Winter 2017 Assignment II: Calculator Brain
 
 Some notes:
-* This assignment builds on top of [CS193P Winter 2017 Assignment I: Calculator](https://github.com/petervanhoef/Calculator)
+* This assignment builds on top of [my solution for CS193P Winter 2017 Assignment I: Calculator](https://github.com/petervanhoef/Calculator)
 * A [Test Driven Development](https://en.wikipedia.org/wiki/Test-driven_development) approach is followed
 * Please look at the [Issues section](https://github.com/petervanhoef/Calculator-Brain/issues) to check:
   * [Open tasks](https://github.com/petervanhoef/Calculator-Brain/issues?q=is%3Aopen+is%3Aissue+label%3Atask)
