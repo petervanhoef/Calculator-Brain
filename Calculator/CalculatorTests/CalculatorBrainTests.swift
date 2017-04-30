@@ -355,4 +355,39 @@ class CalculatorBrainTests: XCTestCase {
         XCTAssertTrue(abs(testBrain.evaluate(using: testDictionary).result! + 1) < 0.0001)
         XCTAssertEqual(testBrain.evaluate(using: testDictionary).description, "cos(M)")
     }
+    
+    func testErrorReportingAssignment2ExtraCredit1() {
+        var testBrain = CalculatorBrain()
+        
+        // Division by zero
+        testBrain.setOperand(3)
+        testBrain.performOperation("÷")
+        testBrain.setOperand(0)
+        testBrain.performOperation("=")
+        var (result, isPending, description, errorDescription) = testBrain.evaluateWithErrorReport()
+        XCTAssertEqual(isPending, false)
+        XCTAssertEqual(description, "3 ÷ 0")
+        XCTAssertEqual(errorDescription, "Division by zero")
+        
+        // Sqrt of negative number
+        testBrain.setOperand(9)
+        testBrain.performOperation("±")
+        testBrain.performOperation("√")
+        (result, isPending, description, errorDescription) = testBrain.evaluateWithErrorReport()
+        XCTAssertEqual(isPending, false)
+        XCTAssertEqual(description, "√(-9)")
+        XCTAssertEqual(errorDescription, "Sqrt of negative number")
+        
+        // and check error is not reported when it goes fine
+        testBrain.setOperand(4)
+        testBrain.performOperation("+")
+        testBrain.setOperand(9)
+        testBrain.performOperation("=")
+        (result, isPending, description, errorDescription) = testBrain.evaluateWithErrorReport()
+        XCTAssertEqual(result, 13)
+        XCTAssertEqual(isPending, false)
+        XCTAssertEqual(description, "4 + 9")
+        XCTAssertEqual(errorDescription, nil)
+    }
+    
 }
