@@ -80,6 +80,7 @@ class ViewController: UIViewController {
         brain = CalculatorBrain()
         dictionary = [:]
         displays = (0, false, "", nil)
+        userIsInTheMiddleOfTyping = false
     }
     
     @IBAction func backspace(_ sender: UIButton) {
