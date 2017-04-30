@@ -17,3 +17,6 @@ Some notes:
 * And, finally, if you like the project, you are welcome to star this project!
 
 Environment: Xcode Version 8.3.2 (8E2002) running on macOS Sierra 10.12.4 (16E195)
+
+## Screen shots
+<img width="188" alt="simulator screen shot 30 apr 2017 17 31 53" src="https://cloud.githubusercontent.com/assets/24625595/25565640/23fde8dc-2dcb-11e7-870f-17282ce625ca.png">
