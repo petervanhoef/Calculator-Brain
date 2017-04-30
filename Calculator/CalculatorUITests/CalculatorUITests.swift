@@ -607,4 +607,18 @@ class CalculatorUITests: XCTestCase {
         XCTAssert(app.staticTexts["Sqrt of negative number"].exists)
         XCTAssert(app.staticTexts[" "].exists)
     }
+    
+    func testLeadingZeroAfterClearBug() {
+        let app = XCUIApplication()
+        
+        app.buttons["7"].tap()
+        app.buttons["3"].tap()
+        app.buttons["2"].tap()
+        app.buttons["1"].tap()
+        app.buttons["C"].tap()
+        app.buttons["3"].tap()
+        app.buttons["9"].tap()
+        XCTAssertFalse(app.staticTexts["039"].exists)
+        XCTAssertTrue(app.staticTexts["39"].exists)
+    }
 }
