@@ -586,4 +586,25 @@ class CalculatorUITests: XCTestCase {
         XCTAssert(app.staticTexts["-1"].exists)
         XCTAssert(app.staticTexts["3.141593"].exists)
     }
+    
+    func testErrorReportingAssignment2ExtraCredit1() {
+        let app = XCUIApplication()
+
+        // Division by zero
+        app.buttons["3"].tap()
+        app.buttons["÷"].tap()
+        app.buttons["0"].tap()
+        app.buttons["="].tap()
+        XCTAssert(app.staticTexts["3 ÷ 0 ="].exists)
+        XCTAssert(app.staticTexts["Division by zero"].exists)
+        XCTAssert(app.staticTexts[" "].exists)
+        
+        // Sqrt of negative number
+        app.buttons["9"].tap()
+        app.buttons["±"].tap()
+        app.buttons["√"].tap()
+        XCTAssert(app.staticTexts["√(-9) ="].exists)
+        XCTAssert(app.staticTexts["Sqrt of negative number"].exists)
+        XCTAssert(app.staticTexts[" "].exists)
+    }
 }
