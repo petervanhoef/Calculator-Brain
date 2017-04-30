@@ -29,17 +29,21 @@ class ViewController: UIViewController {
         }
     }
     
-    var displays: (result: Double?, isPending: Bool, description: String) {
+    var displays: (result: Double?, isPending: Bool, description: String, errorDescription: String?) {
         get {
-            return (Double(display.text!)!, false, sequence.text!)
+            return (Double(display.text!)!, false, sequence.text!, nil)
         }
         set {
+            if (newValue.errorDescription != nil) {
+                display.text = newValue.errorDescription!
+            } else {
             if newValue.result != nil {
                 let numberFormatter = NumberFormatter()
                 numberFormatter.numberStyle = .decimal
                 numberFormatter.usesGroupingSeparator = false
                 numberFormatter.maximumFractionDigits = Constants.numberOfDigitsAfterDecimalPoint
                 display.text = numberFormatter.string(from: NSNumber(value: newValue.result!))
+            }
             }
             if newValue.description.isEmpty {
                 sequence.text = " "
@@ -69,13 +73,13 @@ class ViewController: UIViewController {
         if let mathematicalSymbol = sender.currentTitle {
             brain.performOperation(mathematicalSymbol)
         }
-        displays = brain.evaluate(using: dictionary)
+        displays = brain.evaluateWithErrorReport(using: dictionary)
     }
     
     @IBAction func clear(_ sender: UIButton) {
         brain = CalculatorBrain()
         dictionary = [:]
-        displays = (0, false, "")
+        displays = (0, false, "", nil)
     }
     
     @IBAction func backspace(_ sender: UIButton) {
@@ -89,7 +93,7 @@ class ViewController: UIViewController {
             display.text = textCurrentlyInDisplay
         } else {
             brain.undo()
-            displays = brain.evaluate(using: dictionary)
+            displays = brain.evaluateWithErrorReport(using: dictionary)
         }
     }
     
@@ -97,13 +101,13 @@ class ViewController: UIViewController {
         userIsInTheMiddleOfTyping = false
         let symbol = String(sender.currentTitle!.characters.dropFirst())
         dictionary[symbol] = displays.result!
-        displays = brain.evaluate(using: dictionary)
+        displays = brain.evaluateWithErrorReport(using: dictionary)
     }
     
     @IBAction func setVariable(_ sender: UIButton) {
         let symbol = sender.currentTitle!
         brain.setOperand(variable: symbol)
-        displays = brain.evaluate(using: dictionary)
+        displays = brain.evaluateWithErrorReport(using: dictionary)
     }
 }
 
