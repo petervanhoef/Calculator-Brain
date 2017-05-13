@@ -14,6 +14,7 @@ Some notes:
 * Unfortenately, there are bugs:
   * [Open bugs](https://github.com/petervanhoef/Calculator-Brain/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
   * [Fixed bugs](https://github.com/petervanhoef/Calculator-Brain/issues?q=is%3Aissue+is%3Aclosed+label%3Abug)
+* My solution for assignment III can be found here: [CS193P Winter 2017 Assignment III: Graphing Calculator](https://github.com/petervanhoef/Graphing-Calculator)  
 * And, finally, if you like the project, you are welcome to star this project!
 
 Environment: Xcode Version 8.3.2 (8E2002) running on macOS Sierra 10.12.4 (16E195)
